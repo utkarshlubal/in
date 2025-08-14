@@ -8,7 +8,6 @@ const nextConfig = {
     unoptimized: true,
     dangerouslyAllowSVG: true,
     loader: 'default',
-    path: process.env.NODE_ENV === 'production' ? '/in' : '',
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'assets.aceternity.com' },
@@ -21,6 +20,16 @@ const nextConfig = {
   // Ensure static assets are properly handled
   experimental: {
     optimizePackageImports: ['@radix-ui/react-icons'],
+  },
+  // Ensure CSS is properly processed for static export
+  webpack: (config: any, { isServer }: { isServer: boolean }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
   },
 };
 
